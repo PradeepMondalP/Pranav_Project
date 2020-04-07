@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ManagerHomeActivity">
+
+    <include
+        android:id="@+id/id_manager_home_toolbar"
+        layout="@layout/toolbar_layout"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/id_manager_recycler_view"
+        android:layout_below="@+id/id_manager_home_toolbar"
+        android:layout_above="@+id/id_btn_nav_view"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/id_add_floating_btn_manager"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginRight="10dp"
+        android:clickable="true"
+        app:backgroundTint="@color/green"
+        android:src="@drawable/add"
+        android:layout_height="wrap_content"/>
+
+
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/id_btn_nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/manager_bottom_navigation"/>
+
+</RelativeLayout>

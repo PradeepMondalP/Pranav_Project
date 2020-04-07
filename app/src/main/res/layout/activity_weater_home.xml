@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/id_weater_home_drawer_layout"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start"
+    tools:context=".activity.WeaterHomeActivity">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            layout="@layout/toolbar_layout"
+            android:id="@+id/id_weater_toolbar"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/id_weater_recycler_view"
+            android:layout_marginTop="10dp"
+            android:layout_above="@+id/id_food_ordering_floating_btn"
+            android:layout_below="@+id/id_weater_toolbar"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/id_food_ordering_floating_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/food_book"
+            app:backgroundTint="@color/green"
+            android:elevation="6dp"
+            android:tint="@color/white"
+            app:fabSize="normal"
+            app:borderWidth="0dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/id_weater_home_nav_view"
+               android:layout_gravity="right"
+        app:menu="@menu/weater_nav_menu"
+
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"/>
+
+    <!--app:headerLayout="@layout/weaer_header_layout"
+    -->
+
+</androidx.drawerlayout.widget.DrawerLayout>

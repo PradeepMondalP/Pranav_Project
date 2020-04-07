@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/login_credintials_layout"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/weater_login_email"
+                android:hint="   Enter Email"
+                android:inputType="textEmailAddress"
+                android:padding="10dp"
+                android:drawableLeft="@drawable/email"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/weater_login_pass"
+                android:hint="   Passwowrd"
+                android:layout_below="@+id/weater_login_email"
+                android:inputType="textPassword"
+                android:drawableLeft="@drawable/confirm_password"
+                android:padding="10dp"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/weater_login_button"
+                android:text="login"
+                android:layout_below="@+id/weater_login_pass"
+                android:padding="10dp"
+                android:background="@drawable/button_blue_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/weater_loginUI_signUp_TV"
+                android:layout_width="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/weater_login_button"
+                android:textSize="17sp"
+                android:textColor="@color/black"
+                android:text="New User SignUp here.?"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

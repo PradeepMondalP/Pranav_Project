@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:orientation="horizontal"
+          android:layout_margin="10dp"
+          android:layout_height="wrap_content">
+
+          <de.hdodenhof.circleimageview.CircleImageView
+              android:id="@+id/w_food_pix"
+              android:layout_width="0dp"
+              android:layout_weight="0.75"
+              android:src="@drawable/profile"
+              android:layout_marginTop="20dp"
+              android:layout_height="40dp"/>
+
+          <LinearLayout
+              android:id="@+id/w_item_layout"
+              android:layout_width="0dp"
+              android:layout_weight="2"
+              android:orientation="vertical"
+              android:layout_margin="8dp"
+              android:layout_toRightOf="@+id/food_pix"
+              android:layout_height="wrap_content">
+
+              <TextView
+                  android:id="@+id/w_id_food_name"
+                  android:textSize="18sp"
+                  android:layout_margin="5dp"
+                  android:textColor="@color/black"
+                  android:text="chicken Momo"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"/>
+
+              <TextView
+                  android:id="@+id/w_food_item_price"
+                  android:text="   200Rs"
+                  android:layout_gravity="center"
+                  android:layout_margin="5dp"
+                  android:textColor="@color/black"
+                  android:textSize="16sp"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"/>
+
+          </LinearLayout>
+
+          <LinearLayout
+              android:id="@+id/w_food_counting_linear_layout"
+              android:layout_width="0dp"
+              android:layout_weight="2"
+              android:layout_toRightOf="@+id/item_layout"
+              android:gravity="center"
+              android:orientation="horizontal"
+              android:layout_marginTop="30dp"
+              android:layout_height="wrap_content">
+
+              <ImageButton
+                  android:id="@+id/w_id_item_remove"
+                  android:layout_width="35dp"
+                  android:layout_gravity="center"
+                  android:layout_marginRight="15dp"
+                  android:src="@drawable/minus"
+                  android:background="?android:attr/selectableItemBackground"
+                  android:layout_height="35dp"/>
+
+              <TextView
+                  android:id="@+id/w_id_item_count_"
+                  android:layout_width="wrap_content"
+                  android:text="0"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:layout_marginRight="15dp"
+                  android:textSize="25sp"
+                  android:layout_height="wrap_content"/>
+
+              <ImageButton
+                  android:id="@+id/w_id_item_add"
+                  android:layout_gravity="center"
+                  android:layout_width="35dp"
+                  android:src="@drawable/adding_button"
+                  android:background="?android:attr/selectableItemBackground"
+                  android:layout_height="35dp"/>
+
+          </LinearLayout>
+
+
+      </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
