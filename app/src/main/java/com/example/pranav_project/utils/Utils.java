@@ -1,22 +1,19 @@
 package com.example.pranav_project.utils;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
+import android.content.*;
+import android.view.*;
+import android.widget.*;
+import androidx.appcompat.app.*;
 
 import com.example.pranav_project.R;
+import com.example.pranav_project.activity.*;
 
 import java.text.SimpleDateFormat;
 import java.time.OffsetTime;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class Utils {
+public class Utils  {
     public static final int ENCRYPT_KEY=1472;
 
   public static AlertDialog getAlertDialog(Activity activity , String mesg){
@@ -50,7 +47,7 @@ public class Utils {
 
   public static String getTime(){
     OffsetTime time = OffsetTime.now();
-    String x = time.getHour()+"-"+time.getMinute()+"-"+time.getSecond()+"";
+    String x = time.getHour()+":"+time.getMinute()+":"+time.getSecond()+"";
     return x;
   }
 
@@ -88,5 +85,33 @@ public class Utils {
       long startTime = System.currentTimeMillis();
       startTime=startTime/1000;
       return startTime;
+  }
+
+  public static Intent sendUserToCookActvity(Context context , Class<CookActivity> activity)
+  {
+      Intent intent = new Intent(context , CookActivity.class );
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+      return intent;
+  }
+
+  public static Intent sendUserToLoginActivity(Context context , Class<LoginActivity> activity)
+  {
+      Intent intent = new Intent(context , LoginActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+      return intent;
+  }
+
+  public static Intent sendUserToManagerActivity(Context context, Class<ManagerHomeActivity>activity)
+  {
+      Intent intent = new Intent(context , ManagerHomeActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+      return intent;
+  }
+
+  public static Intent sendUseroWeaterHomeActcivity(Context context , Class<WeaterHomeActivity>activityClass)
+  {
+      Intent intent = new Intent(context , WeaterHomeActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+      return intent;
   }
 }

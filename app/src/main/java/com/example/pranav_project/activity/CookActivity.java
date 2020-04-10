@@ -6,13 +6,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 import com.example.pranav_project.R;
+import com.example.pranav_project.pojo.Pojo_Order_Fetching;
 import com.example.pranav_project.utils.*;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,10 +33,12 @@ public class CookActivity extends AppCompatActivity {
     @BindView(R.id.id_cook_drawer)DrawerLayout drawerLayout;
     @BindView(R.id.id_cook_nav) NavigationView navigationView;
     @BindView(R.id.id_cook_toolbar)Toolbar mToolbar;
-    @BindView(R.id.id_sample) Button sampleBtn;
+    @BindView(R.id.id_cook_recycler_layout)RecyclerView mRecyclerView;
     MySharedPreferences preferences;
     FirebaseFirestore db;
     CollectionReference total_orderRef;
+    FirestoreRecyclerOptions options , optionsDate_filter;
+
 
     private FirebaseAuth mAuh;
     private ArrayList<String> mArrayList = new ArrayList<>();;
@@ -44,29 +51,104 @@ public class CookActivity extends AppCompatActivity {
 
         initialization();
 
+        options = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
+                 .setQuery(total_orderRef.orderBy(MyConstants.TIMESTAMP,Query.Direction.DESCENDING),Pojo_Order_Fetching.class)
+                .build();
+        optionsDate_filter = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
+                .setQuery(total_orderRef.whereEqualTo(MyConstants.DATE,Utils.getDate()),Pojo_Order_Fetching.class )
+                .build();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId())
                 {
+
+                    case R.id.id_all_orders_cook:
+                        printAllOrderToTheScreen(options);
+                        drawerLayout.closeDrawers();                   break;
+
+                    case  R.id.todays_order_id_cook:
+                        printTodaysOrderToTheScreen(optionsDate_filter);
+                        drawerLayout.closeDrawers();                    break;
+
                     case R.id.cook_logout:
                         mAuh.signOut();
                         drawerLayout.closeDrawers();
                         preferences.setUserData(MyConstants.COOK,"0");
-                        sendUserToLoginActivity();
+                        startActivity(Utils.sendUserToLoginActivity(getApplicationContext() , LoginActivity.class));
+                        finish();          break;
 
+                    case R.id.id_cook_home:
+                        startActivity(Utils.sendUserToCookActvity(getApplicationContext(),CookActivity.class));
+                        finish();
+                        break;
                 }
                 return true;
             }
         });
 
-        sampleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                printData();
-            }
-        });
+    }
 
+
+    private void printTodaysOrderToTheScreen(FirestoreRecyclerOptions optionsDate_filter) {
+        FirestoreRecyclerAdapter<Pojo_Order_Fetching ,MyViewHolder> adapter = new
+                FirestoreRecyclerAdapter<Pojo_Order_Fetching, MyViewHolder>(optionsDate_filter) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Pojo_Order_Fetching model) {
+                        String date = model.getDate();
+                        System.out.println("data is "+ date);
+                        if(date.equals(Utils.getDate()))
+                                printDataToTheScreenUsing_DB_Objects(holder , model);
+
+                    }
+
+                    @NonNull
+                    @Override
+                    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view =LayoutInflater.from(getApplicationContext())
+                                .inflate(R.layout.food_order_fetching_layout,parent,false);
+                        return new MyViewHolder(view);
+
+                    }
+                };
+        adapter.startListening();
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    private void printAllOrderToTheScreen(FirestoreRecyclerOptions options) {
+        FirestoreRecyclerAdapter<Pojo_Order_Fetching,MyViewHolder> adapter = new
+                FirestoreRecyclerAdapter<Pojo_Order_Fetching, MyViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Pojo_Order_Fetching model) {
+
+                        printDataToTheScreenUsing_DB_Objects(holder , model);
+                    }
+
+                    @NonNull
+                    @Override
+                    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view = LayoutInflater.from(getApplicationContext())
+                                .inflate(R.layout.food_order_fetching_layout,parent , false);
+                        return new MyViewHolder(view);
+                    }
+                };
+        adapter.startListening();
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    private void printDataToTheScreenUsing_DB_Objects(MyViewHolder holder, Pojo_Order_Fetching model) {
+        holder.nameTV.setText(model.getName());
+        holder.dateTV.setText(model.getDate());
+        holder.timeTV.setText(model.getTime());
+
+        Map<String , Object>map =(Map<String, Object>) model.getItems();
+        String[] str = new String[map.size()];
+        int x=0;
+        for(Map.Entry<String ,Object> entry : map.entrySet() )
+            holder.listView.append( entry.getKey().toString() +"  "+entry.getValue().toString()+"\n");
     }
 
     @Override
@@ -129,12 +211,6 @@ public class CookActivity extends AppCompatActivity {
     }
 
 
-    private void sendUserToLoginActivity() {
-        Intent intent = new Intent(CookActivity.this , LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.weater_home_menu , menu);
@@ -151,5 +227,16 @@ public class CookActivity extends AppCompatActivity {
         return true;
     }
 
+    public static class MyViewHolder extends RecyclerView.ViewHolder
+    {
+       @BindView(R.id.id_x_date)TextView dateTV;
+       @BindView(R.id.id_x_time)TextView timeTV;
+       @BindView(R.id.id_x_Name)TextView nameTV;
+       @BindView(R.id.id_food_x_lv)TextView listView;
 
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            ButterKnife.bind(this,itemView);
+        }
+    }
 }

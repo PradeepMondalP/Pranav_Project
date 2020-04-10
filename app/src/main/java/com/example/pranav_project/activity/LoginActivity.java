@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.util.Util;
 import com.example.pranav_project.R;
 import com.example.pranav_project.utils.MyConstants;
 import com.example.pranav_project.utils.MySharedPreferences;
@@ -106,14 +107,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
 
         if(mySharedPreferences.getUserData(MyConstants.WEATER).equals("1"))
-            sendUserToWeaterHomeActivity();
+            {
+                startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),WeaterHomeActivity.class));    finish();
+            }
         else
-            if(mySharedPreferences.getUserData(MyConstants.MANAGER).equals("1"))
-                sendUserToManagerHomeActivity();
+            if(mySharedPreferences.getUserData(MyConstants.MANAGER).equals("1"))     // send to Manager
+            {
+                startActivity(Utils.sendUserToManagerActivity(getApplicationContext(),ManagerHomeActivity.class));    finish();
+            }
             else
                 if(mySharedPreferences.getUserData(MyConstants.COOK).equals("1"))
-                    sendUserToCookActvity();
+                {
+                    startActivity(Utils.sendUserToCookActvity(getApplicationContext(),CookActivity.class));    finish();
+                }
     }
+
 
     private void request_function()
      {
@@ -178,12 +186,10 @@ public class LoginActivity extends AppCompatActivity {
                     pass.setError("minimum length hsould be 7");
                     return ;
                 }
-
                 else
                 {
                     mDialog = Utils.getAlertDialog(LoginActivity.this , "Signing in..");
                     mDialog.show();
-
                     mAuth.signInWithEmailAndPassword(mEmail , mPass)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -196,9 +202,17 @@ public class LoginActivity extends AppCompatActivity {
                                                 "login completed successfully", Toast.LENGTH_SHORT).show();
 
                                          if(loginUserName.equals(MyConstants.COOK))
-                                                 sendUserToCookActvity();
+                                         {
+                                             startActivity(Utils.sendUserToCookActvity(getApplicationContext(),
+                                                     CookActivity.class));
+                                             finish();
+                                         }
                                          else
-                                             sendUserToWeaterHomeActivity();
+                                         {                   // sending to weater activity
+                                             startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext()
+                                                     ,WeaterHomeActivity.class));
+                                             finish();
+                                         }
                                     }
                                     else
                                         Toast.makeText(LoginActivity.this, "error in logon", Toast.LENGTH_SHORT).show();
@@ -293,8 +307,7 @@ public class LoginActivity extends AppCompatActivity {
                                       {
                                           saveImageFirst(name,email , phone , pass , signUserName);
                                       }
-                                      // iff
-                                      else
+                                      else   // iff
                                           Utils.toast(LoginActivity.this,"account not created");
                                   }
                               });
@@ -324,10 +337,8 @@ public class LoginActivity extends AppCompatActivity {
                                     map.put(MyConstants.PROFILE_URL , image_URL);
 
                                     saveDataToFirebase(map , signUpUserName);
-
                                 }
                             });
-
                 }
                 else
                    Utils.toast(LoginActivity.this,"couldnt upload image");
@@ -359,12 +370,13 @@ public class LoginActivity extends AppCompatActivity {
 
                                if(task.isSuccessful()){
                                    mySharedPreferences.setUserData(MyConstants.MANAGER , "1");
-                                   sendUserToManagerHomeActivity();
+                                                                                    // sending user to manager actcity
+                                   startActivity(Utils.sendUserToManagerActivity(getApplicationContext() , ManagerHomeActivity.class));
+                                   finish();
                                    mDialog.dismiss();
                                }
                                else{
-                                   Toast.makeText(LoginActivity.this,
-                                           "something wrong while log in..", Toast.LENGTH_SHORT).show();
+                                   Utils.toast(LoginActivity.this ,"Something wen wrong while sign in..");
                                    mDialog.dismiss();
                                }
                            }
@@ -376,30 +388,10 @@ public class LoginActivity extends AppCompatActivity {
         request_function();
         mySharedPreferences = MySharedPreferences.getInstance(this);
 
-
         mAuth  = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference().child("weater_profile");
 
     }
-
-    private void sendUserToManagerHomeActivity() {
-    Intent intent = new Intent(LoginActivity.this , ManagerHomeActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-    startActivity(intent);
-    }
-
-    private void sendUserToWeaterHomeActivity(){
-        Intent intent = new Intent(LoginActivity.this , WeaterHomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    private void sendUserToCookActvity() {
-       Intent intent = new Intent(LoginActivity.this , CookActivity.class);
-       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NEW_TASK);
-       startActivity(intent);
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -432,23 +424,26 @@ public class LoginActivity extends AppCompatActivity {
                      public void onComplete(@NonNull Task<Void> task) {
 
                         mDialog.dismiss();
-                         if(task.isSuccessful()){
+                         if(task.isSuccessful())
+                         {
                              mySharedPreferences.setUserData(signUpUserName,"1");
 
                              mySharedPreferences.setUserData(MyConstants.NAME , map.get(MyConstants.NAME));
                              mySharedPreferences.setUserData(MyConstants.PROFILE_URL , map.get(MyConstants.PROFILE_URL));
 
-
                             Utils. toast(LoginActivity.this,"data saved");
 
-                          if(signUpUserName.equals(MyConstants.WEATER))
-                               sendUserToWeaterHomeActivity();
-                          else
-                              sendUserToCookActvity();
+                              if(signUpUserName.equals(MyConstants.WEATER))    // sending to weater
+                                   {
+                                        startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),WeaterHomeActivity.class));  finish();
+                                   }
+                                  else    // sending to cook act
+                                  {
+                                      startActivity(Utils.sendUserToCookActvity(getApplicationContext(), CookActivity.class));   finish();
+                                  }
                          }
-                         else{
+                         else
                             Utils. toast(LoginActivity.this,"data not saved");
-                         }
                      }
                  });
     }

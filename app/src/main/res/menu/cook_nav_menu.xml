@@ -3,14 +3,27 @@
 
     <group android:checkableBehavior="single">
 
-     <item
-         android:title="Logout"
-         android:id="@+id/cook_logout"
-         android:icon="@drawable/logout"/>
+        <item
+            android:title="Todays Order"
+            android:id="@+id/todays_order_id_cook"/>
+
+        <item
+            android:title="All orders"
+            android:id="@+id/id_all_orders_cook"/>
 
         <item
             android:title="My cooked items"
             android:id="@+id/id_cook_all_cookec"/>
+
+        <item
+            android:title="Home"
+            android:id="@+id/id_cook_home"
+            android:icon="@drawable/home"/>
+
+        <item
+            android:title="Logout"
+            android:id="@+id/cook_logout"
+            android:icon="@drawable/logout"/>
 
     </group>
 </menu>

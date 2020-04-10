@@ -18,11 +18,8 @@ import android.widget.*;
 
 import com.example.pranav_project.R;
 import com.example.pranav_project.pojo.MyPojo;
-import com.example.pranav_project.utils.MyConstants;
-import com.example.pranav_project.utils.MySharedPreferences;
-import com.example.pranav_project.utils.Utils;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.example.pranav_project.utils.*;
+import com.firebase.ui.firestore.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -193,7 +190,6 @@ public class WeaterHomeActivity extends AppCompatActivity {
 
     }
 
-
     private void initialization() {
         navigationView = (NavigationView)findViewById(R.id.id_weater_home_nav_view);
         View navHeaderView = navigationView.inflateHeaderView(R.layout.weaer_header_layout);
@@ -261,13 +257,10 @@ public class WeaterHomeActivity extends AppCompatActivity {
                                 float totalSum = Integer.parseInt(holder.mItem_cost.getText().toString().trim()) * foodItemCount;
                                 holder.itemTotalCost.setText(totalSum+"");
 
-                                MY_TOTAL_FOOD_SUM+= Integer.parseInt(holder.mItem_cost.getText().toString().trim());
-
+                                    MY_TOTAL_FOOD_SUM+= Integer.parseInt(holder.mItem_cost.getText().toString().trim());
                                     final  String foodName = holder.mFoodName.getText().toString();
-                                    float foodPrice =Float.parseFloat(holder.mItem_cost.getText().toString());
 
                                 foodMap.put(foodName,foodItemCount+"");
-
 
                             }
                         });
@@ -282,19 +275,13 @@ public class WeaterHomeActivity extends AppCompatActivity {
                                     foodItemCount = Integer.parseInt(holder.itemCountShowTV.getText().toString());
                                     holder.itemCountShowTV.setText(--foodItemCount +"");
 
-                                    int totalSum = Integer.parseInt(holder.mItem_cost.getText().toString().trim()) *foodItemCount;
+                                    int totalSum = Integer.parseInt(holder.mItem_cost.getText().toString().trim()) * foodItemCount;
                                     holder.itemTotalCost.setText(totalSum+"");
 
                                     MY_TOTAL_FOOD_SUM-= Integer.parseInt(holder.mItem_cost.getText().toString().trim());
 
-                                    // .................
                                     final  String foodName = holder.mFoodName.getText().toString();
-                                    float foodPrice =Float.parseFloat(holder.mItem_cost.getText().toString());
-                                    int count = Integer.parseInt(holder.itemCountShowTV.getText().toString());
-                                    float totalCost = foodPrice * count;
-
                                      foodMap.put(foodName,foodItemCount+"");
-
                                 }
                                 if(foodItemCount==0)
                                 {
@@ -302,16 +289,15 @@ public class WeaterHomeActivity extends AppCompatActivity {
                                     holder.itemTotalCost.setText("0");
                                     MY_TOTAL_FOOD_SUM+= 0;
                                 }
-
                             }
                         });
-
                     }
 
                     @NonNull
                     @Override
                     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.waiter_food_order_taking_layout, parent , false);
+                        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.waiter_food_order_taking_layout,
+                                parent , false);
                         return new MyViewHolder(view);
                     }
                 };
@@ -324,7 +310,7 @@ public class WeaterHomeActivity extends AppCompatActivity {
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
 
-         @BindView(R.id.yy_id_food_name) TextView mFoodName;
+        @BindView(R.id.yy_id_food_name) TextView mFoodName;
         @BindView(R.id.yy_food_item_price) TextView mItem_cost;
         @BindView(R.id.ff_id_item_remove) ImageButton minusItem;
         @BindView(R.id.ff_id_item_add) ImageButton addItem;

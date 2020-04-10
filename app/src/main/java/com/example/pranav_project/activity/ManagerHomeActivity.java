@@ -172,27 +172,18 @@ public class ManagerHomeActivity extends AppCompatActivity
        final AlertDialog dialog= Utils.getAlertDialog(this , " data Updating...");
        dialog.show();
 
-        String mItemName = Utils.getEncryptMessage(foodName.getText().toString());
-        String mItemCount = Utils.getEncryptMessage(itemCountTV.getText().toString());
-        String mtotalCostOfItem = Utils.getEncryptMessage(totalCostOfItem.getText().toString());
-        String mIndividualCost = Utils.getEncryptMessage(itemPrice.getText().toString());
-        currentDate = Utils.getEncryptMessage(Utils.getDate());
-        String currentTime = Utils.getTime();
-        currentDateAndTime = Utils.getDateAndTime();
-
-
         Map<String , String>map = new HashMap<>();
 
-         map.put(MyConstants.FOOD_NAME ,mItemName);
-         map.put(MyConstants.FOOD_INDIVIDUAL_COST ,mIndividualCost);
-         map.put(MyConstants.ITEM_COUNT ,mItemCount);
-         map.put(MyConstants.FOOD_TOTAL_COST , mtotalCostOfItem);
-         map.put(MyConstants.DATE , currentDate);
-        map.put(MyConstants.TIME , currentTime);
+         map.put(MyConstants.FOOD_NAME ,Utils.getEncryptMessage(foodName.getText().toString() ));
+         map.put(MyConstants.FOOD_INDIVIDUAL_COST ,Utils.getEncryptMessage(itemPrice.getText().toString()));
+         map.put(MyConstants.ITEM_COUNT , Utils.getEncryptMessage(itemCountTV.getText().toString() ) );
+         map.put(MyConstants.FOOD_TOTAL_COST ,  Utils.getEncryptMessage(totalCostOfItem.getText().toString()));
+         map.put(MyConstants.DATE , Utils.getEncryptMessage(Utils.getDate() ));
+        map.put(MyConstants.TIME , Utils.getTime());
         map.put(MyConstants.TIMESTAMP , (System.currentTimeMillis()/1000)+"");
 
         CollectionReference mRef = FirebaseFirestore.getInstance().collection("food");
-        mRef.document(currentDateAndTime+"")
+        mRef.document(Utils.getDateAndTime()+"")
                 .set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -237,17 +228,10 @@ public class ManagerHomeActivity extends AppCompatActivity
             case R.id.id_manager_logout:
                        mAuth.signOut();
                        mySharedPreferences.setUserData(MyConstants.MANAGER , "0");
-                       sendUserToLoginActivity();
-
+                       startActivity(Utils.sendUserToLoginActivity(getApplicationContext(),LoginActivity.class));  finish();
                 break;
         }
         return true;
-    }
-
-    private void sendUserToLoginActivity() {
-        Intent intent = new Intent(ManagerHomeActivity.this , LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     @Override
