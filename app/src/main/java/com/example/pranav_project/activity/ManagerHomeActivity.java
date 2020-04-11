@@ -293,4 +293,21 @@ public class ManagerHomeActivity extends AppCompatActivity
             ButterKnife.bind(this ,itemView );
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Exit");
+        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ManagerHomeActivity.super.onBackPressed();
+            }
+        })
+                .setNegativeButton("Cancel",null)
+                .setCancelable(true);
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
 }

@@ -2,6 +2,7 @@ package com.example.pranav_project.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -9,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
@@ -54,9 +56,11 @@ public class CookActivity extends AppCompatActivity {
         options = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
                  .setQuery(total_orderRef.orderBy(MyConstants.TIMESTAMP,Query.Direction.DESCENDING),Pojo_Order_Fetching.class)
                 .build();
+
         optionsDate_filter = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
                 .setQuery(total_orderRef.whereEqualTo(MyConstants.DATE,Utils.getDate()),Pojo_Order_Fetching.class )
                 .build();
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
@@ -67,11 +71,15 @@ public class CookActivity extends AppCompatActivity {
                 {
 
                     case R.id.id_all_orders_cook:
+//                        mArrayList.clear();
+//                        addAllDocuments_to_list();
                         printAllOrderToTheScreen(options);
                         drawerLayout.closeDrawers();                   break;
 
                     case  R.id.todays_order_id_cook:
                         printTodaysOrderToTheScreen(optionsDate_filter);
+                        mArrayList.clear();
+                      //  addAllDocuments_to_list();
                         drawerLayout.closeDrawers();                    break;
 
                     case R.id.cook_logout:
@@ -119,6 +127,7 @@ public class CookActivity extends AppCompatActivity {
     }
 
     private void printAllOrderToTheScreen(FirestoreRecyclerOptions options) {
+
         FirestoreRecyclerAdapter<Pojo_Order_Fetching,MyViewHolder> adapter = new
                 FirestoreRecyclerAdapter<Pojo_Order_Fetching, MyViewHolder>(options) {
                     @Override
@@ -139,41 +148,41 @@ public class CookActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
     }
 
-    private void printDataToTheScreenUsing_DB_Objects(MyViewHolder holder, Pojo_Order_Fetching model) {
+    public static void printDataToTheScreenUsing_DB_Objects(MyViewHolder holder, Pojo_Order_Fetching model) {
         holder.nameTV.setText(model.getName());
         holder.dateTV.setText(model.getDate());
         holder.timeTV.setText(model.getTime());
 
-        Map<String , Object>map =(Map<String, Object>) model.getItems();
-        String[] str = new String[map.size()];
-        int x=0;
+        Map<String , Object> map = model.getItems();
+
         for(Map.Entry<String ,Object> entry : map.entrySet() )
-            holder.listView.append( entry.getKey().toString() +"  "+entry.getValue().toString()+"\n");
+            holder.listView.append( entry.getKey()+"  "+entry.getValue().toString()+"\n");
+        //map.clear();
     }
+//
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//        addAllDocuments_to_list();
+//    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        addAllDocuments_to_list();
-    }
-
-    private void addAllDocuments_to_list() {
-        total_orderRef
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e)
-                    {
-
-                        if(snapshots.isEmpty())
-                            System.out.println("snapshot are empty");
-                        else
-                            for(DocumentChange doc : snapshots.getDocumentChanges())
-                                if(doc.getType()==DocumentChange.Type.ADDED)
-                                    mArrayList.add(doc.getDocument().getId());     // adding all the documents to the list
-                    }
-                });
-    }
+//    private void addAllDocuments_to_list() {
+//        total_orderRef
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e)
+//                    {
+//
+//                        if(snapshots.isEmpty())
+//                            System.out.println("snapshot are empty");
+//                        else
+//                            for(DocumentChange doc : snapshots.getDocumentChanges())
+//                                if(doc.getType()==DocumentChange.Type.ADDED)
+//                                    mArrayList.add(doc.getDocument().getId());     // adding all the documents to the list
+//                    }
+//                });
+//    }
 
     private void initialization() {
         setSupportActionBar(mToolbar);
@@ -238,5 +247,22 @@ public class CookActivity extends AppCompatActivity {
             super(itemView);
             ButterKnife.bind(this,itemView);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Exit");
+        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                CookActivity.super.onBackPressed();
+            }
+        })
+                .setNegativeButton("Cancel",null)
+                .setCancelable(true);
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }

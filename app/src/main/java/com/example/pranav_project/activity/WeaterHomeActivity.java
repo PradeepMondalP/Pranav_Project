@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.*;
 
 import com.example.pranav_project.R;
 import com.example.pranav_project.pojo.MyPojo;
+import com.example.pranav_project.pojo.Pojo_Order_Fetching;
 import com.example.pranav_project.utils.*;
 import com.firebase.ui.firestore.*;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,9 +44,9 @@ public class WeaterHomeActivity extends AppCompatActivity {
     private Toolbar mToolbar;
 
     private FirebaseAuth mAuth;
-    private CollectionReference Waiterreference , foodRef;
+    private CollectionReference Waiterreference , foodRef , total_order_ref;
     private DocumentReference dRef;
-    private FirestoreRecyclerOptions options;
+    private FirestoreRecyclerOptions options , options_my_todays_order , options_my_total_orders;
     private FirebaseFirestore db;
     private String currentUserID ;
 
@@ -69,14 +71,32 @@ public class WeaterHomeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initialization();
+
+        fetchUserData();      //fetch user profile , user name etc...
+
         options = new FirestoreRecyclerOptions.Builder<MyPojo>()
                 .setQuery(foodRef.orderBy(MyConstants.TIMESTAMP , Query.Direction.DESCENDING) , MyPojo.class)
                 .build();
+
+          // todays order..
+        options_my_todays_order = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
+                .setQuery(total_order_ref.whereEqualTo(MyConstants.DATE ,Utils.getDate())
+                                         .whereEqualTo(MyConstants.NAME , preferences.getUserData(MyConstants.CURRENT_USER_NAME))
+                           //              .whereEqualTo(MyConstants.TIMESTAMP ,Query.Direction.DESCENDING)
+                ,Pojo_Order_Fetching.class)
+                .build();
+
+        // total orders......
+        options_my_total_orders = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
+                .setQuery(total_order_ref.whereEqualTo(MyConstants.NAME ,preferences.getUserData(MyConstants.CURRENT_USER_NAME)  )
+                                         //.whereEqualTo(MyConstants.TIMESTAMP, Query.Direction.DESCENDING)
+                                        // .whereEqualTo(MyConstants.TIMESTAMP, Query.Direction.DESCENDING)
+                , Pojo_Order_Fetching.class )
+                .build();
+
+
              mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        drawerLayout.closeDrawers();
-
-        fetchUserData();
 
         navigationView.setNavigationItemSelectedListener
                 (new NavigationView.OnNavigationItemSelectedListener() {
@@ -86,15 +106,26 @@ public class WeaterHomeActivity extends AppCompatActivity {
                 switch (item.getItemId())
                 {
                     case R.id.id_whm_home:
-                        Toast.makeText(WeaterHomeActivity.this, "hi", Toast.LENGTH_SHORT).show();
+                        startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),WeaterHomeActivity.class)); finish();
                         drawerLayout.closeDrawers();
                         break;
 
                     case R.id.id_weater_logout:
                         preferences.setUserData(MyConstants.WEATER,"0");
                         mAuth.signOut();
+                        startActivity(Utils.sendUserToLoginActivity(getApplicationContext(),LoginActivity.class));
+                        finish();
+                        break;
 
-                        sendUserToLoginActivity();
+                    case R.id.weater_todays_order:
+                          showMy_Todays_Order();
+                         drawerLayout.closeDrawers();
+                         break;
+
+                    case R.id.weater_total_order:
+                        showMy_Total_Order();
+                        drawerLayout.closeDrawers();
+                        break;
                 }
                 return true;
             }
@@ -103,18 +134,63 @@ public class WeaterHomeActivity extends AppCompatActivity {
         foodOrderingFBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(MY_TOTAL_FOOD_SUM==0)
+                {
+                    Utils.toast(WeaterHomeActivity.this ,"you must select some items");
+                    return;
+                }
                  call_food_order_confirming_layout();
                  Utils.toast(WeaterHomeActivity.this ,MY_TOTAL_FOOD_SUM+"");
 
-                 samplePrint();
             }
         });
     }
 
-    private void samplePrint() {
-        for(Map.Entry e :foodMap.entrySet())
-            System.out.println("key "+ e.getKey() +"\t value " +e.getValue());
+    private void showMy_Total_Order() {
+
+        FirestoreRecyclerAdapter<Pojo_Order_Fetching , CookActivity.MyViewHolder> adapter =
+                new FirestoreRecyclerAdapter<Pojo_Order_Fetching, CookActivity.MyViewHolder>(options_my_total_orders) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull CookActivity.MyViewHolder holder, int position, @NonNull Pojo_Order_Fetching model) {
+
+                        CookActivity.printDataToTheScreenUsing_DB_Objects(holder ,model);
+
+                    }
+
+                    @NonNull
+                    @Override
+                    public CookActivity.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view = LayoutInflater.from(getApplicationContext())
+                                .inflate(R.layout.food_order_fetching_layout, parent , false);
+                        return new CookActivity.MyViewHolder(view);
+                    }
+                };
+        adapter.startListening();
+        mRecyclerView.setAdapter(adapter);
     }
+
+    private void showMy_Todays_Order() {
+
+        FirestoreRecyclerAdapter<Pojo_Order_Fetching,CookActivity.MyViewHolder>adapter =
+                new FirestoreRecyclerAdapter<Pojo_Order_Fetching, CookActivity.MyViewHolder>(options_my_todays_order) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull CookActivity.MyViewHolder holder, int position, @NonNull Pojo_Order_Fetching model) {
+
+                        CookActivity.printDataToTheScreenUsing_DB_Objects(holder ,model);
+                    }
+
+                    @NonNull
+                    @Override
+                    public CookActivity.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View view = LayoutInflater.from(getApplicationContext())
+                                .inflate(R.layout.food_order_fetching_layout, parent , false);
+                        return new CookActivity.MyViewHolder(view);
+                    }
+                };
+        adapter.startListening();
+        mRecyclerView.setAdapter(adapter);
+    }
+
 
     private void call_food_order_confirming_layout() {
        AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -207,6 +283,7 @@ public class WeaterHomeActivity extends AppCompatActivity {
         orderRef = FirebaseFirestore.getInstance().collection(MyConstants.ORDERS);
         foodRef = FirebaseFirestore.getInstance().collection(MyConstants.FOOD_REF);
         db = FirebaseFirestore.getInstance();
+        total_order_ref = FirebaseFirestore.getInstance().collection(MyConstants.TOTAL_ORDER_REF);
 
         preferences = MySharedPreferences.getInstance(this);
         preferences.setUserData(MyConstants.CURRENT_USER_ID , currentUserID);
@@ -228,12 +305,6 @@ public class WeaterHomeActivity extends AppCompatActivity {
                 break;
         }
         return true;
-    }
-
-    public  void sendUserToLoginActivity() {
-        Intent intent = new Intent(WeaterHomeActivity.this ,LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 
     private void retrieveDataFromDatabase() {
@@ -306,7 +377,6 @@ public class WeaterHomeActivity extends AppCompatActivity {
     }
 
 
-
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
 
@@ -321,6 +391,24 @@ public class WeaterHomeActivity extends AppCompatActivity {
             super(itemView);
             ButterKnife.bind(this , itemView);
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Confirm Exit");
+        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                WeaterHomeActivity.super.onBackPressed();
+            }
+        })
+                .setNegativeButton("Cancel",null)
+                .setCancelable(true);
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 
 

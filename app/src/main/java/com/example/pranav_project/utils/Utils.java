@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetTime;
 import java.util.*;
 
-public class Utils  {
+public class Utils  extends AppCompatActivity{
     public static final int ENCRYPT_KEY=1472;
 
   public static AlertDialog getAlertDialog(Activity activity , String mesg){
@@ -114,4 +114,5 @@ public class Utils  {
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
       return intent;
   }
+
 }

@@ -11,6 +11,14 @@
     </item>
 
     <item
+        android:title="My Todays Order"
+        android:id="@+id/weater_todays_order"/>
+
+    <item
+        android:title="My total order"
+        android:id="@+id/weater_total_order"/>
+
+    <item
         android:title="wallet"
         android:id="@+id/id_whm_wallet"
         android:icon="@drawable/mywallet"/>
