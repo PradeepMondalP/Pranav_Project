@@ -7,6 +7,7 @@
 
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/id_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -68,10 +69,11 @@
                         android:layout_height="wrap_content"/>
 
                     <TextView
-                        android:id="@+id/xx_food_item_available"
-                        android:text="Avilable"
+                        android:id="@+id/xx_food_item_delete"
+                        android:text="Delete"
+                        android:background="?android:attr/selectableItemBackground"
                         android:layout_margin="5dp"
-                        android:textColor="@color/black"
+                        android:textColor="@android:color/holo_red_dark"
                         android:textSize="16sp"
                         android:layout_width="0dp"
                         android:layout_weight="0.75"
@@ -89,5 +91,12 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_below="@+id/id_card"
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:background="@color/black"/>
+
 
 </RelativeLayout>

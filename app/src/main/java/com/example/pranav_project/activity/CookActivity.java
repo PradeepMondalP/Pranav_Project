@@ -25,23 +25,26 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 import com.google.firebase.firestore.EventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CookActivity extends AppCompatActivity {
 
     @BindView(R.id.id_cook_drawer)DrawerLayout drawerLayout;
-    @BindView(R.id.id_cook_nav) NavigationView navigationView;
+    NavigationView navigationView;
     @BindView(R.id.id_cook_toolbar)Toolbar mToolbar;
     @BindView(R.id.id_cook_recycler_layout)RecyclerView mRecyclerView;
+    private CircleImageView navProfile;
+    private TextView navProfileName;
+
     MySharedPreferences preferences;
     FirebaseFirestore db;
     CollectionReference total_orderRef;
     FirestoreRecyclerOptions options , optionsDate_filter;
-
-
     private FirebaseAuth mAuh;
     private ArrayList<String> mArrayList = new ArrayList<>();;
 
@@ -52,6 +55,9 @@ public class CookActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initialization();
+        Picasso.with(this).load(preferences.getUserData(MyConstants.PROFILE_URL)).into(navProfile);
+        navProfileName.setText(preferences.getUserData(MyConstants.PROFILE_NAME));
+
 
         options = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
                  .setQuery(total_orderRef.orderBy(MyConstants.TIMESTAMP,Query.Direction.DESCENDING),Pojo_Order_Fetching.class)
@@ -186,6 +192,11 @@ public class CookActivity extends AppCompatActivity {
 
     private void initialization() {
         setSupportActionBar(mToolbar);
+        navigationView = (NavigationView)findViewById(R.id.id_cook_nav);
+        View navHeaderView = navigationView.inflateHeaderView(R.layout.weaer_header_layout);
+        navProfile = (CircleImageView)navHeaderView.findViewById(R.id.id_weater_header_layout_photo);
+        navProfileName = (TextView)navHeaderView.findViewById(R.id.id_weater_header_layout_name);
+
         preferences = MySharedPreferences.getInstance(this);
         mAuh = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -193,7 +204,6 @@ public class CookActivity extends AppCompatActivity {
     }
 
     private void printData() {
-
         System.out.println("mArrayList contains "+ mArrayList);
           DocumentReference dRef;
           for( int i = 0 ; i<mArrayList.size() ; i++)

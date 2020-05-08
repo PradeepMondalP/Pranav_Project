@@ -30,9 +30,9 @@ public class MyPojo {
 
     String timeStamp = MyConstants.TIMESTAMP;
 
-    public String getAdded_item() {
-        return added_item;
-    }
+//    public String getAdded_item() {
+//        return added_item;
+//    }
 
     public void setAdded_item(String added_item) {
         this.added_item = added_item;

@@ -39,6 +39,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -52,18 +53,9 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.btn_3) Button cook;
     private AlertDialog mDialog;
 
-    CircleImageView wProfilePic;
-
-    private static final int REQ_CODE=100;
-    private int PERMIISION_REQ_CODE=200;
-    private Uri mUri;
-    private String permission[] = {Manifest.permission.READ_EXTERNAL_STORAGE};
-
     private FirebaseAuth mAuth;
-    private StorageReference storageReference;
-    private CollectionReference weaterCookRef;
-    private String image_URL , CurrentUserID;
-    MySharedPreferences mySharedPreferences;
+
+    private MySharedPreferences mySharedPreferences;
 
 
     @Override
@@ -79,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 call_login_of_manager();
+                mySharedPreferences.setUserData(MyConstants.CURRENT_USER_CLICKED,MyConstants.MANAGER);
             }
         });
 
@@ -86,21 +79,20 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 call_login(MyConstants.WEATER);
+                mySharedPreferences.setUserData(MyConstants.CURRENT_USER_CLICKED,MyConstants.WEATER);
             }
         });
 
         cook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                call_cook_login(MyConstants.COOK);
+                call_login(MyConstants.COOK);
+                mySharedPreferences.setUserData(MyConstants.CURRENT_USER_CLICKED,MyConstants.COOK);
             }
         });
 
     }
 
-    private void call_cook_login(String COOK) {
-        call_login(COOK);
-    }
 
     @Override
     protected void onStart() {
@@ -123,15 +115,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void request_function()
-     {
-         if(ActivityCompat.
-                 checkSelfPermission(this , permission[0])!= PackageManager.PERMISSION_GRANTED)
-         {
-             ActivityCompat.requestPermissions(LoginActivity.this , permission ,PERMIISION_REQ_CODE);
-         }
-     }
-
     private void call_login_of_manager() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Login Here");
@@ -150,11 +133,11 @@ public class LoginActivity extends AppCompatActivity {
         builder.setTitle("Login");
         View view  =LayoutInflater.from(this).inflate(R.layout.weater_login , null , false);
 
-        doLoginForWeater(view , loginUserName);
+        doLoginForUser(view , loginUserName);
         builder.setView(view);
 
-        final TextView weaterSignUpTV = view.findViewById(R.id.weater_loginUI_signUp_TV);
-        weaterSignUpTV.setOnClickListener(new View.OnClickListener() {
+        final TextView userSignUpTV = view.findViewById(R.id.user_signUp_TV);
+        userSignUpTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 open_Weater_SignUp_UI(loginUserName);
@@ -165,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // login for weater and manager
-    private void doLoginForWeater(View view , final String loginUserName) {
+    private void doLoginForUser(View view , final String loginUserName) {
         final EditText email = view.findViewById(R.id.weater_login_email);
         final EditText pass = view.findViewById(R.id.weater_login_pass);
         final Button loginButton = view.findViewById(R.id.weater_login_button);
@@ -201,18 +184,18 @@ public class LoginActivity extends AppCompatActivity {
                                         Toast.makeText(LoginActivity.this,
                                                 "login completed successfully", Toast.LENGTH_SHORT).show();
 
-                                         if(loginUserName.equals(MyConstants.COOK))
-                                         {
+                                          if(loginUserName.equals(MyConstants.COOK))
+                                            {
                                              startActivity(Utils.sendUserToCookActvity(getApplicationContext(),
                                                      CookActivity.class));
                                              finish();
-                                         }
-                                         else
-                                         {                   // sending to weater activity
+                                            }
+                                           else
+                                                 {
                                              startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext()
                                                      ,WeaterHomeActivity.class));
                                              finish();
-                                         }
+                                                  }
                                     }
                                     else
                                         Toast.makeText(LoginActivity.this, "error in logon", Toast.LENGTH_SHORT).show();
@@ -252,36 +235,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // signUp processs of the weater  and cook
-    private void signUpProcessOfWeater(View view,final String signUserName) {
-        final EditText wName =view.findViewById(R.id.weater_signUp_name);
+    private void signUpProcessOfWeater(View view,final String clickedUserName) {
+
         final EditText wEmail = view.findViewById(R.id.weater_signUp_email);
-        final EditText wMob = view.findViewById(R.id.weater_signUp_number);
         final EditText wPass = view.findViewById(R.id.weater_signUp_pass);
         final EditText wConPass = view.findViewById(R.id.weater_signUp_confirm_pass);
         Button   wSignUp = view.findViewById(R.id.weater_signUp_button);
-         wProfilePic = view.findViewById(R.id.weater_dp);
-
-        wProfilePic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent ,REQ_CODE );
-            }
-        });
 
         wSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 final String name = wName.getText().toString().trim();
                 final String email = wEmail.getText().toString().trim();
                 final String pass = wPass.getText().toString().trim();
                 final String cpass = wConPass.getText().toString().trim();
-                final String phone = wMob.getText().toString().trim();
 
-               if(TextUtils.isEmpty(name) ||TextUtils.isEmpty(email)
-                       ||TextUtils.isEmpty(phone)||TextUtils.isEmpty(pass)||TextUtils.isEmpty(cpass) ){
+               if(TextUtils.isEmpty(email)
+                       ||TextUtils.isEmpty(pass)||TextUtils.isEmpty(cpass) ){
                    Toast.makeText(LoginActivity.this, "must enter all values", Toast.LENGTH_SHORT).show();
                    return;
                }
@@ -289,12 +258,6 @@ public class LoginActivity extends AppCompatActivity {
                    wConPass.setError("password doesnt match");
                    return;
                }
-               else
-                   if(mUri==null){
-                       Toast.makeText(LoginActivity.this, "", Toast.LENGTH_SHORT).show();
-                       return;
-                   }
-
                else{
                    mDialog = Utils.getAlertDialog(LoginActivity.this , "signing in");
                    mDialog.show();
@@ -305,7 +268,26 @@ public class LoginActivity extends AppCompatActivity {
 
                                       if(task.isSuccessful())
                                       {
-                                          saveImageFirst(name,email , phone , pass , signUserName);
+                                          Map<String,String> map = new LinkedHashMap<>();
+                                          map.put(MyConstants.EMAIL,email);
+                                          map.put(MyConstants.PASSWORD, pass);
+
+                                          FirebaseFirestore.getInstance().collection(clickedUserName)
+                                                  .document(FirebaseAuth.getInstance().getCurrentUser().getUid().toString())
+                                                  .set(map)
+                                                  .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                      @Override
+                                                      public void onComplete(@NonNull Task<Void> task) {
+                                                          if(task.isSuccessful())
+                                                          {
+                                                              Intent intent = new Intent(getApplicationContext(),SecondStepVerifyActivity.class);
+                                                              intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                              startActivity(intent);
+                                                              finish();
+                                                          }
+                                                      }
+                                                  });
+
                                       }
                                       else   // iff
                                           Utils.toast(LoginActivity.this,"account not created");
@@ -316,35 +298,31 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveImageFirst( final String name, final String email, final String phone, final String pass,final String signUpUserName) {
-
-        UploadTask task = storageReference.putFile(mUri);
-        task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful()){
-                    task.getResult().getStorage().getDownloadUrl()
-                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    image_URL = uri.toString();
-
-                                    Map<String ,String> map = new HashMap<>();
-                                    map.put(MyConstants.NAME ,name);
-                                    map.put(MyConstants.EMAIL , email);
-                                    map.put(MyConstants.PHONE , phone);
-                                    map.put(MyConstants.PASSWORD , pass);
-                                    map.put(MyConstants.PROFILE_URL , image_URL);
-
-                                    saveDataToFirebase(map , signUpUserName);
-                                }
-                            });
-                }
-                else
-                   Utils.toast(LoginActivity.this,"couldnt upload image");
-            }
-        });
-    }
+//    private void saveImageFirst( final String email, final String phone,final String signUpUserName) {
+//
+//        UploadTask task = storageReference.putFile(mUri);
+//        task.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if(task.isSuccessful()){
+//                    task.getResult().getStorage().getDownloadUrl()
+//                            .addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                @Override
+//                                public void onSuccess(Uri uri) {
+//                                    image_URL = uri.toString();
+//
+//                                    Map<String ,String> map = new HashMap<>();
+//                                    map.put(MyConstants.EMAIL , email);
+//
+//                                    saveDataToFirebase(map , signUpUserName);
+//                                }
+//                            });
+//                }
+//                else
+//                   Utils.toast(LoginActivity.this,"couldnt upload image");
+//            }
+//        });
+//    }
 
     // manager login
     private void doLoginForManager(EditText email, EditText pass) {
@@ -385,68 +363,48 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initializations() {
-        request_function();
+
         mySharedPreferences = MySharedPreferences.getInstance(this);
-
         mAuth  = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference().child("weater_profile");
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==REQ_CODE && resultCode==RESULT_OK){
-            CropImage.activity(data.getData())
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setAspectRatio(1,1)
-                    .setOutputCompressQuality(50)
-                    .start(this);
-        }
-        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(result!=null){
-                mUri = result.getUri();
-                wProfilePic.setImageURI(mUri);
-            }
-        }
-    }
 
-    private void saveDataToFirebase(final Map<String, String> map,final String signUpUserName) {
-
-         weaterCookRef =FirebaseFirestore.getInstance().collection(signUpUserName+"");
-
-        CurrentUserID = mAuth.getCurrentUser().getUid();
-         weaterCookRef.document(CurrentUserID).set(map)
-                 .addOnCompleteListener(new OnCompleteListener<Void>() {
-                     @Override
-                     public void onComplete(@NonNull Task<Void> task) {
-
-                        mDialog.dismiss();
-                         if(task.isSuccessful())
-                         {
-                             mySharedPreferences.setUserData(signUpUserName,"1");
-
-                             mySharedPreferences.setUserData(MyConstants.NAME , map.get(MyConstants.NAME));
-                             mySharedPreferences.setUserData(MyConstants.PROFILE_URL , map.get(MyConstants.PROFILE_URL));
-
-                            Utils. toast(LoginActivity.this,"data saved");
-
-                              if(signUpUserName.equals(MyConstants.WEATER))    // sending to weater
-                                   {
-                                        startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),WeaterHomeActivity.class));  finish();
-                                   }
-                                  else    // sending to cook act
-                                  {
-                                      startActivity(Utils.sendUserToCookActvity(getApplicationContext(), CookActivity.class));   finish();
-                                  }
-                         }
-                         else
-                            Utils. toast(LoginActivity.this,"data not saved");
-                     }
-                 });
-    }
+//    private void saveDataToFirebase(final Map<String, String> map,final String signUpUserName) {
+//
+//         weaterCookRef =FirebaseFirestore.getInstance().collection(signUpUserName+"");
+//
+//        CurrentUserID = mAuth.getCurrentUser().getUid();
+//         weaterCookRef.document(CurrentUserID).set(map)
+//                 .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                     @Override
+//                     public void onComplete(@NonNull Task<Void> task) {
+//
+//                        mDialog.dismiss();
+//                         if(task.isSuccessful())
+//                         {
+//                             mySharedPreferences.setUserData(signUpUserName,"1");
+//
+//                             mySharedPreferences.setUserData(MyConstants.NAME , map.get(MyConstants.NAME));
+//                             mySharedPreferences.setUserData(MyConstants.PROFILE_URL , map.get(MyConstants.PROFILE_URL));
+//
+//                            Utils. toast(LoginActivity.this,"data saved");
+//
+//                              if(signUpUserName.equals(MyConstants.WEATER))    // sending to weater
+//                                   {
+//                                        startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),WeaterHomeActivity.class));  finish();
+//                                   }
+//                                  else    // sending to cook act
+//                                  {
+//                                      startActivity(Utils.sendUserToCookActvity(getApplicationContext(), CookActivity.class));   finish();
+//                                  }
+//                         }
+//                         else
+//                            Utils. toast(LoginActivity.this,"data not saved");
+//                     }
+//                 });
+//    }
 
 
 }

@@ -16,45 +16,13 @@
             android:layout_margin="10dp"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/weater_dp"
-                android:src="@drawable/profile"
-                android:layout_centerHorizontal="true"
-                android:layout_width="220dp"
-                android:layout_height="200dp"/>
-
-            <EditText
-                android:id="@+id/weater_signUp_name"
-                android:hint="   Enter Name"
-                android:drawableLeft="@drawable/user"
-                android:layout_below="@+id/weater_dp"
-                android:inputType="textPersonName"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:textColorHint="@color/black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
             <EditText
                 android:id="@+id/weater_signUp_email"
-                android:layout_below="@+id/weater_signUp_name"
                 android:hint="   Enter Email"
                 android:inputType="textEmailAddress"
                 android:textColorHint="@color/black"
                 android:padding="10dp"
                 android:drawableLeft="@drawable/email"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <EditText
-                android:id="@+id/weater_signUp_number"
-                android:layout_below="@+id/weater_signUp_email"
-                android:hint="  Mobile Number"
-                android:inputType="number"
-                android:textColorHint="@color/black"
-                android:padding="10dp"
-                android:drawableLeft="@drawable/phone"
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
@@ -67,7 +35,7 @@
                 android:drawableLeft="@drawable/confirm_password"
                 android:inputType="textPassword"
                 android:textColorHint="@color/black"
-                android:layout_below="@+id/weater_signUp_number"
+                android:layout_below="@+id/weater_signUp_email"
                 android:padding="5dp"
                 android:layout_margin="10dp"
                 android:layout_width="match_parent"
@@ -87,7 +55,7 @@
 
             <Button
                 android:id="@+id/weater_signUp_button"
-                android:text="SignUp"
+                android:text="Proceed"
                 android:padding="10dp"
                 android:layout_below="@+id/weater_signUp_confirm_pass"
                 android:background="@drawable/button_blue_background"

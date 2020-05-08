@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:id="@+id/weater_loginUI_signUp_TV"
+                android:id="@+id/user_signUp_TV"
                 android:layout_width="wrap_content"
                 android:layout_margin="20dp"
                 android:layout_alignParentEnd="true"

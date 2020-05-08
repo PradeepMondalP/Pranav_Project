@@ -13,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.CookActivity"></activity>
+        <activity android:name=".activity.SecondStepVerifyActivity"></activity>
+        <activity android:name=".activity.AdminProfileActivity" />
+        <activity android:name=".activity.CookActivity" />
         <activity android:name=".activity.ManagerHomeActivity" />
         <activity android:name=".activity.WeaterHomeActivity" />
         <activity android:name=".activity.LoginActivity">

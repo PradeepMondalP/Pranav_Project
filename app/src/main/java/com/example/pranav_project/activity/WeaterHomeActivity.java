@@ -72,7 +72,8 @@ public class WeaterHomeActivity extends AppCompatActivity {
 
         initialization();
 
-        fetchUserData();      //fetch user profile , user name etc...
+        Picasso.with(this).load(preferences.getUserData(MyConstants.PROFILE_URL)).into(navProfile);
+        navProfileName.setText(preferences.getUserData(MyConstants.PROFILE_NAME));
 
         options = new FirestoreRecyclerOptions.Builder<MyPojo>()
                 .setQuery(foodRef.orderBy(MyConstants.TIMESTAMP , Query.Direction.DESCENDING) , MyPojo.class)
@@ -81,14 +82,14 @@ public class WeaterHomeActivity extends AppCompatActivity {
           // todays order..
         options_my_todays_order = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
                 .setQuery(total_order_ref.whereEqualTo(MyConstants.DATE ,Utils.getDate())
-                                         .whereEqualTo(MyConstants.NAME , preferences.getUserData(MyConstants.CURRENT_USER_NAME))
+                                         .whereEqualTo(MyConstants.NAME , preferences.getUserData(MyConstants.PROFILE_NAME))
                            //              .whereEqualTo(MyConstants.TIMESTAMP ,Query.Direction.DESCENDING)
                 ,Pojo_Order_Fetching.class)
                 .build();
 
         // total orders......
         options_my_total_orders = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()
-                .setQuery(total_order_ref.whereEqualTo(MyConstants.NAME ,preferences.getUserData(MyConstants.CURRENT_USER_NAME)  )
+                .setQuery(total_order_ref.whereEqualTo(MyConstants.NAME ,preferences.getUserData(MyConstants.PROFILE_NAME)  )
                                          //.whereEqualTo(MyConstants.TIMESTAMP, Query.Direction.DESCENDING)
                                         // .whereEqualTo(MyConstants.TIMESTAMP, Query.Direction.DESCENDING)
                 , Pojo_Order_Fetching.class )
@@ -216,7 +217,7 @@ public class WeaterHomeActivity extends AppCompatActivity {
 
         Map<String , Object> foodMapFinal = new LinkedHashMap<>();
         foodMapFinal.put(MyConstants.USER_ID , preferences.getUserData(MyConstants.CURRENT_USER_ID));
-        foodMapFinal.put(MyConstants.NAME , preferences.getUserData(MyConstants.CURRENT_USER_NAME));
+        foodMapFinal.put(MyConstants.NAME , preferences.getUserData(MyConstants.PROFILE_NAME));
         foodMapFinal.put(MyConstants.DATE , Utils.getDate());
         foodMapFinal.put(MyConstants.TIME , Utils.getTime());
         foodMapFinal.put(MyConstants.TIMESTAMP , Utils.getTimeStamp());
@@ -248,23 +249,6 @@ public class WeaterHomeActivity extends AppCompatActivity {
         MY_TOTAL_FOOD_SUM=0;
     }
 
-    private void fetchUserData() {
-        dRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-
-                if(snapshot.exists()){
-                    String name = snapshot.getString(MyConstants.NAME.toString());
-                    String image_url = snapshot.getString(MyConstants.PROFILE_URL);
-                    preferences.setUserData(MyConstants.CURRENT_USER_NAME, name);
-                    navProfileName.setText(name);
-                    Picasso.with(getApplicationContext()).load(image_url)
-                            .into(navProfile);
-                }
-            }
-        });
-
-    }
 
     private void initialization() {
         navigationView = (NavigationView)findViewById(R.id.id_weater_home_nav_view);
@@ -314,8 +298,8 @@ public class WeaterHomeActivity extends AppCompatActivity {
                     @Override
                     protected void onBindViewHolder(@NonNull final MyViewHolder holder, int position, @NonNull MyPojo model)
                     {
-                        holder.mFoodName.setText(Utils.getDecryptedMessage(model.getFood()));
-                        holder.mItem_cost.setText(Utils.getDecryptedMessage(model.getItem_cost()));
+                        holder.mFoodName.setText((model.getFood()));
+                        holder.mItem_cost.setText((model.getItem_cost()));
 
                         holder.addItem.setOnClickListener(new View.OnClickListener()
                         {

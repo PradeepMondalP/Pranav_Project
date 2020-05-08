@@ -38,7 +38,6 @@ public class ManagerHomeActivity extends AppCompatActivity
     @BindView(R.id.id_manager_home_toolbar) Toolbar mToolbar;
     @BindView(R.id.id_btn_nav_view) BottomNavigationView bottonMenu;
     @BindView(R.id.id_manager_recycler_view)RecyclerView mRecyclerView;
-    String currentDateAndTime, currentDate;
 
     private CollectionReference cRef;
     private FirestoreRecyclerOptions options;
@@ -69,6 +68,7 @@ public class ManagerHomeActivity extends AppCompatActivity
         options = new FirestoreRecyclerOptions.Builder<MyPojo>()
                 .setQuery(cRef.orderBy(MyConstants.TIMESTAMP,Query.Direction.DESCENDING) , MyPojo.class)
                 .build();
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         fButton.setOnClickListener(new View.OnClickListener() {
@@ -78,40 +78,29 @@ public class ManagerHomeActivity extends AppCompatActivity
             }
         });
 
-        NavHelper.enableNavView(this ,bottonMenu);
+
+        bottonMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case  R.id.id_home :
+                        Utils.toast(ManagerHomeActivity.this ,"home");
+                        break;
+                    case R.id.id_orders:
+                        Utils.toast(ManagerHomeActivity.this ,"orders");
+                        break;
+                    case R.id.id_setting:
+                        Intent  intent = new Intent(ManagerHomeActivity.this , AdminProfileActivity.class);
+                        startActivity(intent);
+                        break;
+
+                }
+                return false;
+            }
+        });
 
     }
-
-    //  dont delete the comment , write down in  a note book
-
-//    private void fetchAllItemsFromFirestore() {
-//        cRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException e) {
-//
-//                for(DocumentChange doc : snapshots.getDocumentChanges())
-//                {
-//                    if(doc.getType()==DocumentChange.Type.ADDED)
-//                    {
-//                        System.out.println("............"+ doc.getDocument().getId());
-//
-//                        cRef.document(doc.getDocument().getId()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
-//                            @Override
-//                            public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-//
-//                                if(snapshot.exists()){
-//
-//                                    System.out.println("time = "+ snapshot.getString(MyConstants.TIME));
-//                                    System.out.println("item Name = "+ Utils.getDecryptedMessage(snapshot.getString(MyConstants.FOOD_NAME)));
-//                                }
-//                            }
-//                        });
-//                    }
-//                    System.out.println();
-//                }
-//            }
-//        });
- //   }
 
     private void openItemAddingDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ManagerHomeActivity.this);
@@ -172,13 +161,13 @@ public class ManagerHomeActivity extends AppCompatActivity
        final AlertDialog dialog= Utils.getAlertDialog(this , " data Updating...");
        dialog.show();
 
-        Map<String , String>map = new HashMap<>();
+        Map<String , Object>map = new HashMap<>();
 
-         map.put(MyConstants.FOOD_NAME ,Utils.getEncryptMessage(foodName.getText().toString() ));
-         map.put(MyConstants.FOOD_INDIVIDUAL_COST ,Utils.getEncryptMessage(itemPrice.getText().toString()));
-         map.put(MyConstants.ITEM_COUNT , Utils.getEncryptMessage(itemCountTV.getText().toString() ) );
-         map.put(MyConstants.FOOD_TOTAL_COST ,  Utils.getEncryptMessage(totalCostOfItem.getText().toString()));
-         map.put(MyConstants.DATE , Utils.getEncryptMessage(Utils.getDate() ));
+         map.put(MyConstants.FOOD_NAME ,(foodName.getText().toString() ));
+         map.put(MyConstants.FOOD_INDIVIDUAL_COST ,(itemPrice.getText().toString()));
+         map.put(MyConstants.ITEM_COUNT , (itemCountTV.getText().toString() ) );
+         map.put(MyConstants.FOOD_TOTAL_COST ,  (totalCostOfItem.getText().toString()));
+         map.put(MyConstants.DATE ,(Utils.getDate() ));
         map.put(MyConstants.TIME , Utils.getTime());
         map.put(MyConstants.TIMESTAMP , (System.currentTimeMillis()/1000)+"");
 
@@ -245,9 +234,7 @@ public class ManagerHomeActivity extends AppCompatActivity
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        // itemPrice.setText(itemsClassObj.itemCost.get(itemsClassObj.foodItems[0]) +"");
-       // totalCostOfItem.setText(itemsClassObj.getPriceOfItem(ITEMCOUNT , itemsClassObj.foodItems[0])+"");
-        itemPrice.setText("120");
+
     }
 
 
@@ -264,9 +251,9 @@ public class ManagerHomeActivity extends AppCompatActivity
             @Override
             protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull MyPojo model) {
 
-                holder.mFoodName.setText(Utils.getDecryptedMessage(model.getFood()));
-                holder.item_cost.setText(Utils.getDecryptedMessage(model.getItem_cost()));
-                holder.mFoodCount.setText(Utils.getDecryptedMessage(model.getAdded_item()));
+                holder.mFoodName.setText((model.getFood()));
+                holder.item_cost.setText((model.getItem_cost()));
+                //holder.mFoodCount.setText((model.getAdded_item()));
             }
 
             @NonNull
@@ -286,7 +273,7 @@ public class ManagerHomeActivity extends AppCompatActivity
     {
         @BindView(R.id.xx_id_food_name)TextView mFoodName;
         @BindView(R.id.xx_food_item_price)TextView item_cost;
-        @BindView(R.id.xx_food_item_available)TextView mFoodCount;
+        @BindView(R.id.xx_food_item_delete)TextView mFoodCount;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

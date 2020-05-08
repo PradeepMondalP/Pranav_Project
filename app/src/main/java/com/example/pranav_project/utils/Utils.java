@@ -51,25 +51,25 @@ public class Utils  extends AppCompatActivity{
     return x;
   }
 
-  public static String getEncryptMessage(String msg){
-      char []ch = msg.toCharArray();
-      char []ch2 = new char[ch.length];
-      int intArr[] = new int[ch.length];
-      for(int i = 0 ;i<ch.length ; i++)
-           ch2[i] = (char) ( (int) ch[i] +  1472 )   ;
+//  public static String getEncryptMessage(String msg){
+//      char []ch = msg.toCharArray();
+//      char []ch2 = new char[ch.length];
+//      int intArr[] = new int[ch.length];
+//      for(int i = 0 ;i<ch.length ; i++)
+//           ch2[i] = (char) ( (int) ch[i] +  1472 )   ;
+//
+//      return new String(ch2);
+//  }
 
-      return new String(ch2);
-  }
-
-  public static String getDecryptedMessage(String msg)
-  {
-      if(msg.length()==0)   return "";
-      char []ch = msg.toCharArray();
-      char []ch2 = new char[ch.length];
-      for(int i = 0 ;i<ch.length ; i++)
-          ch2[i] = (char) ( (int) ch[i] -  1472 )   ;
-      return new String(ch2);
-  }
+//  public static String getDecryptedMessage(String msg)
+//  {
+//      if(msg.length()==0)   return "";
+//      char []ch = msg.toCharArray();
+//      char []ch2 = new char[ch.length];
+//      for(int i = 0 ;i<ch.length ; i++)
+//          ch2[i] = (char) ( (int) ch[i] -  1472 )   ;
+//      return new String(ch2);
+//  }
 
   public static int getSum(LinkedList<Integer> list)
   {
