@@ -11,14 +11,6 @@
         android:id="@+id/id_manager_home_toolbar"
         layout="@layout/toolbar_layout"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/id_manager_recycler_view"
-        android:layout_below="@+id/id_manager_home_toolbar"
-        android:layout_above="@+id/id_btn_nav_view"
-        android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_height="wrap_content"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/id_add_floating_btn_manager"

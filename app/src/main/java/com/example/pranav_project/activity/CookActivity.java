@@ -55,8 +55,8 @@ public class CookActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         initialization();
-        Picasso.with(this).load(preferences.getUserData(MyConstants.PROFILE_URL)).into(navProfile);
-        navProfileName.setText(preferences.getUserData(MyConstants.PROFILE_NAME));
+
+      //  loadImagesAndName();
 
 
         options = new FirestoreRecyclerOptions.Builder<Pojo_Order_Fetching>()

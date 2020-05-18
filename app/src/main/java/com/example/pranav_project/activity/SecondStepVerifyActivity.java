@@ -94,7 +94,6 @@ public class SecondStepVerifyActivity extends AppCompatActivity {
         final Map<String,Object>map = new HashMap<>();
         map.put(MyConstants.NAME,name);
         map.put(MyConstants.PHONE,phn);
-        mySharedPreferences.setUserData(MyConstants.PROFILE_NAME,name);
 
          user_clicked_referance
                 .document(CurrentUserID)
@@ -136,8 +135,6 @@ public class SecondStepVerifyActivity extends AppCompatActivity {
                                             .update(map);
                                     mDialog.dismiss();
 
-                                    mySharedPreferences.setUserData(MyConstants.PROFILE_URL,image_URL);
-
                                     if(clicked_user.equals(MyConstants.WEATER))
                                       {
                                         startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext(),
@@ -161,7 +158,6 @@ public class SecondStepVerifyActivity extends AppCompatActivity {
         mAuth  = FirebaseAuth.getInstance();
         CurrentUserID = mAuth.getCurrentUser().getUid();
         mySharedPreferences = MySharedPreferences.getInstance(this);
-        mySharedPreferences.setUserData(MyConstants.CURRENT_USER_ID ,CurrentUserID);
         storageReference = FirebaseStorage.getInstance().getReference();
         user_clicked_referance = FirebaseFirestore.getInstance()
                 .collection(mySharedPreferences.getUserData(MyConstants.CURRENT_USER_CLICKED));

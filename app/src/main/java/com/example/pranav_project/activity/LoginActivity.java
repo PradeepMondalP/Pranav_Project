@@ -78,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
         weater.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                call_login(MyConstants.WEATER);
                 mySharedPreferences.setUserData(MyConstants.CURRENT_USER_CLICKED,MyConstants.WEATER);
+                call_login(MyConstants.WEATER);
             }
         });
 
@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         builder.setTitle("Login");
         View view  =LayoutInflater.from(this).inflate(R.layout.weater_login , null , false);
 
+        System.out.println(" loginUserName ......"+ loginUserName);
         doLoginForUser(view , loginUserName);
         builder.setView(view);
 
@@ -153,6 +154,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText pass = view.findViewById(R.id.weater_login_pass);
         final Button loginButton = view.findViewById(R.id.weater_login_button);
 
+        System.out.println("loginUserName........ "+loginUserName);
 
        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,14 +188,19 @@ public class LoginActivity extends AppCompatActivity {
 
                                           if(loginUserName.equals(MyConstants.COOK))
                                             {
-                                             startActivity(Utils.sendUserToCookActvity(getApplicationContext(),
-                                                     CookActivity.class));
+                                                startActivity(Utils.sendUserToCookActvity(getApplicationContext(),
+                                                        CookActivity.class));
+                                                System.out.println("sending to COOK activity..........");
+
+
                                              finish();
                                             }
                                            else
                                                  {
-                                             startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext()
-                                                     ,WeaterHomeActivity.class));
+                                                     startActivity(Utils.sendUseroWeaterHomeActcivity(getApplicationContext()
+                                                             ,WeaterHomeActivity.class));
+                                                     System.out.println("sending to weater Ctiviyt.....");
+
                                              finish();
                                                   }
                                     }
